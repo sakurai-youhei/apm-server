@@ -57,10 +57,12 @@ jobs:
       - uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.3.7
-      - name: Build apmbench
-        run: make apmbench $SSH_KEY terraform.tfvars
-      - name: Spin up benchmark environment
-        run: make docker-override-committed-version init apply; echo "-> infra setup done"
-      - name: Tear down benchmark environment
-        if: always()
-        run: make destroy
+      - run: |
+          env | grep TF_VAR
+#      - name: Build apmbench
+#        run: make apmbench $SSH_KEY terraform.tfvars
+#      - name: Spin up benchmark environment
+#        run: make docker-override-committed-version init apply; echo "-> infra setup done"
+#      - name: Tear down benchmark environment
+#        if: always()
+#        run: make destroy
