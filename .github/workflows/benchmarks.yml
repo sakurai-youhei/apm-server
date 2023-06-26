@@ -14,8 +14,8 @@ jobs:
         working-directory: testing/benchmark
     env:
       SSH_KEY: ./id_rsa_terraform
-      TF_VAR_PRIVATE_KEY: ./id_rsa_terraform
-      TF_VAR_PUBLIC_KEY: ./id_rsa_terraform.pub
+      TF_VAR_private_key: ./id_rsa_terraform
+      TF_VAR_public_key: ./id_rsa_terraform.pub
       TFVARS_SOURCE: "system-profiles/8GBx1zone.tfvars" # // Default to use an 8gb profile
       TF_VAR_BUILD_ID: ${{ github.run_id }}
       TF_VAR_ENVIRONMENT: ci
@@ -51,6 +51,7 @@ jobs:
             secret/observability-team/ci/elastic-observability-aws-account-auth access_key | AWS_ACCESS_KEY_ID ;
             secret/observability-team/ci/elastic-observability-aws-account-auth secret_key | AWS_SECRET_ACCESS_KEY ;
             secret/observability-team/ci/benchmark-cloud user | GOBENCH_USERNAME ;
+            secret/observability-team/ci/benchmark-cloud password | GOBENCH_PASSWORD ;
             secret/observability-team/ci/benchmark-cloud url | GOBENCH_HOST ;
             secret/observability-team/ci/elastic-cloud/observability-pro apiKey | EC_API_KEY ;
 
@@ -59,10 +60,12 @@ jobs:
           terraform_version: 1.3.7
       - run: |
           env | grep TF_VAR
-#      - name: Build apmbench
-#        run: make apmbench $SSH_KEY terraform.tfvars
-#      - name: Spin up benchmark environment
-#        run: make docker-override-committed-version init apply; echo "-> infra setup done"
-#      - name: Tear down benchmark environment
-#        if: always()
-#        run: make destroy
+      - name: Build apmbench
+        run: make apmbench $SSH_KEY terraform.tfvars
+      - name: Spin up benchmark environment
+        run: make docker-override-committed-version init apply; echo "-> infra setup done"
+      - name: Run benchmarks
+        run: make run-benchmark-autotuned index-benchmark-results
+      - name: Tear down benchmark environment
+        if: always()
+        run: make destroy
