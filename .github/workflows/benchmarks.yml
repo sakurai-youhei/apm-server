@@ -52,6 +52,7 @@ jobs:
             secret/observability-team/ci/elastic-observability-aws-account-auth secret_key | AWS_SECRET_ACCESS_KEY ;
             secret/observability-team/ci/benchmark-cloud user | GOBENCH_USERNAME ;
             secret/observability-team/ci/benchmark-cloud url | GOBENCH_HOST ;
+            secret/observability-team/ci/elastic-cloud/observability-pro apiKey | EC_API_KEY ;
 
       - uses: hashicorp/setup-terraform@v2
         with:
