@@ -27,7 +27,7 @@ jobs:
           CREATED_AT=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
           echo "TF_VAR_BRANCH=${SLUGGED_BRANCH_NAME}" >> "$GITHUB_ENV"
           echo "TF_VAR_CREATED_AT=${CREATED_AT}" >> "$GITHUB_ENV"
-          echo "USER=benchci-$SLUGGED_BRANCH_NAME-$CREATED_AT" >> $GITHUB_ENV"
+          echo "USER=benchci-$SLUGGED_BRANCH_NAME-$CREATED_AT" >> "$GITHUB_ENV"
       - uses: elastic/apm-pipeline-library/.github/actions/docker-login@main
         with:
           registry: docker.elastic.co
