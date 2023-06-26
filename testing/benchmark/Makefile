@@ -28,7 +28,12 @@ SHELL = /bin/bash
 .SHELLFLAGS = -o pipefail -c
 
 # This profile will also be used by the Terraform provider.
-export AWS_PROFILE ?= default
+
+# export AWS_PROFILE if CI is not defined
+ifeq ($(CI),)
+	export AWS_PROFILE ?= default
+endif
+
 
 .default: all
 
