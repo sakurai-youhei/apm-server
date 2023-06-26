@@ -9,6 +9,9 @@ on:
 jobs:
   benchmarks:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: testing/benchmark
     env:
       SSH_KEY: ./id_rsa_terraform
       TF_VAR_PRIVATE_KEY: ./id_rsa_terraform
@@ -20,6 +23,9 @@ jobs:
       GOBENCH_TAGS: branch=${{ github.head_ref || github.ref }},commit=${{ github.sha }},target_branch=${{ github.base_ref }}
     steps:
       - uses: actions/checkout@v3
+      - uses: actions/setup-go@v4
+        with:
+          go-version-file: 'go.mod'
       - uses: rlespinasse/github-slug-action@d1ca8ffbce40ea2371e35bca356db0acacf567d2
       - name: Set up env
         run: |
@@ -54,3 +60,6 @@ jobs:
         run: make apmbench $SSH_KEY terraform.tfvars
       - name: Spin up benchmark environment
         run: make docker-override-committed-version init apply; echo "-> infra setup done"
+      - name: Tear down benchmark environment
+        if: always()
+        run: make destroy
