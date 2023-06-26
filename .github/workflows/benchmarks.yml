@@ -30,7 +30,7 @@ jobs:
       - name: Set up env
         run: |
           SLUGGED_BRANCH_NAME=${{ env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
-          CREATED_AT=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          CREATED_AT=$(date +%s)
           echo "TF_VAR_BRANCH=${SLUGGED_BRANCH_NAME}" >> "$GITHUB_ENV"
           echo "TF_VAR_CREATED_AT=${CREATED_AT}" >> "$GITHUB_ENV"
           echo "USER=benchci-$SLUGGED_BRANCH_NAME-$CREATED_AT" >> "$GITHUB_ENV"
