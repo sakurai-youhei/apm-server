@@ -78,6 +78,11 @@ jobs:
           name: kibana-png-report
           path: ${{ env.PNG_REPORT_FILE }}
           if-no-files-found: error
+      - uses: actions/upload-artifact@v3
+        with:
+          name: benchmark-result
+          path: ${{ env.BENCHMARK_RESULT }}
+          if-no-files-found: error
       - name: Tear down benchmark environment
         if: always()
         run: make destroy
