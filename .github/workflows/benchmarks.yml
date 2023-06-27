@@ -6,6 +6,10 @@ on:
 
   pull_request: # TODO Remove again
 
+env:
+  PNG_REPORT_FILE: out.png
+  BENCHMARK_RESULT: benchmark-result.txt
+
 jobs:
   benchmarks:
     runs-on: ubuntu-latest
@@ -54,18 +58,26 @@ jobs:
             secret/observability-team/ci/benchmark-cloud password | GOBENCH_PASSWORD ;
             secret/observability-team/ci/benchmark-cloud url | GOBENCH_HOST ;
             secret/observability-team/ci/elastic-cloud/observability-pro apiKey | EC_API_KEY ;
+            secret/observability-team/ci/apm-benchmark-kibana user | KIBANA_USERNAME ;
+            secret/observability-team/ci/apm-benchmark-kibana password | KIBANA_PASSWORD ;
+            secret/observability-team/ci/apm-benchmark-kibana kibana_url | KIBANA_ENDPOINT ;
 
       - uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.3.7
-      - run: |
-          env | grep TF_VAR
       - name: Build apmbench
         run: make apmbench $SSH_KEY terraform.tfvars
       - name: Spin up benchmark environment
         run: make docker-override-committed-version init apply; echo "-> infra setup done"
       - name: Run benchmarks
         run: make run-benchmark-autotuned index-benchmark-results
+      - name: Download PNG
+        run: .ci/scripts/download-png-from-kibana.sh $KIBANA_ENDPOINT $KIBANA_USER $KIBANA_PASSWORD $PNG_REPORT_FILE
+      - uses: actions/upload-artifact@v3
+        with:
+          name: kibana-png-report
+          path: ${{ env.PNG_REPORT_FILE }}
+          if-no-files-found: error
       - name: Tear down benchmark environment
         if: always()
         run: make destroy
