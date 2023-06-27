@@ -79,6 +79,7 @@ jobs:
           path: ${{ env.PNG_REPORT_FILE }}
           if-no-files-found: error
       - uses: actions/upload-artifact@v3
+        if: always()
         with:
           name: benchmark-result
           path: ${{ env.BENCHMARK_RESULT }}
