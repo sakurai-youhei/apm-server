@@ -72,6 +72,8 @@ jobs:
         run: make docker-override-committed-version init apply; echo "-> infra setup done"
       - name: Run benchmarks
         run: make run-benchmark-autotuned index-benchmark-results
+      - if: always()
+        run: ls -la
       - name: Download PNG
         run: .ci/scripts/download-png-from-kibana.sh $KIBANA_ENDPOINT $KIBANA_USER $KIBANA_PASSWORD $PNG_REPORT_FILE
       - uses: actions/upload-artifact@v3
